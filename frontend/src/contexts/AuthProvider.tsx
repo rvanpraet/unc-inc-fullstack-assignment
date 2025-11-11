@@ -1,5 +1,5 @@
 import { useState, useEffect, type ReactNode } from 'react'
-import { type User, authService } from '../lib/auth'
+import { type RegisterCredentials, type User, authService } from '../lib/auth'
 import { AuthContext } from './AuthContext'
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -16,14 +16,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         })
     }, [])
 
+    const getToken = () => {
+        return localStorage.getItem('accessToken')
+    }
+
     const login = async (username: string, password: string) => {
         const user = await authService.login({ username, password })
         setUser(user)
         setIsAuthenticated(true)
     }
 
-    const register = async (username: string, email: string, password: string) => {
-        return await authService.register({ username, email, password })
+    const register = async (data: RegisterCredentials) => {
+        return await authService.register(data)
         // setUser(user)
     }
 
@@ -33,7 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     return (
-        <AuthContext.Provider value={{ user, isLoading, isAuthenticated, login, register, logout }}>
+        <AuthContext.Provider value={{ user, isLoading, isAuthenticated, login, register, logout, getToken }}>
             {children}
         </AuthContext.Provider>
     )

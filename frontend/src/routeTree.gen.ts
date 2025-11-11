@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RegisterRouteImport } from './routes/register'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
@@ -16,6 +17,11 @@ import { Route as AuthArticlesRouteImport } from './routes/_auth.articles'
 import { Route as AuthArticlesArticleIdRouteImport } from './routes/_auth.articles.$articleId'
 import { Route as AuthArticlesArticleIdEditRouteImport } from './routes/_auth.articles.$articleId.edit'
 
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -50,6 +56,7 @@ const AuthArticlesArticleIdEditRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
   '/articles': typeof AuthArticlesRouteWithChildren
   '/articles/$articleId': typeof AuthArticlesArticleIdRouteWithChildren
   '/articles/$articleId/edit': typeof AuthArticlesArticleIdEditRoute
@@ -57,6 +64,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
   '/articles': typeof AuthArticlesRouteWithChildren
   '/articles/$articleId': typeof AuthArticlesArticleIdRouteWithChildren
   '/articles/$articleId/edit': typeof AuthArticlesArticleIdEditRoute
@@ -66,6 +74,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_auth': typeof AuthRouteWithChildren
   '/login': typeof LoginRoute
+  '/register': typeof RegisterRoute
   '/_auth/articles': typeof AuthArticlesRouteWithChildren
   '/_auth/articles/$articleId': typeof AuthArticlesArticleIdRouteWithChildren
   '/_auth/articles/$articleId/edit': typeof AuthArticlesArticleIdEditRoute
@@ -75,6 +84,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/login'
+    | '/register'
     | '/articles'
     | '/articles/$articleId'
     | '/articles/$articleId/edit'
@@ -82,6 +92,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/login'
+    | '/register'
     | '/articles'
     | '/articles/$articleId'
     | '/articles/$articleId/edit'
@@ -90,6 +101,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_auth'
     | '/login'
+    | '/register'
     | '/_auth/articles'
     | '/_auth/articles/$articleId'
     | '/_auth/articles/$articleId/edit'
@@ -99,10 +111,18 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRouteWithChildren
   LoginRoute: typeof LoginRoute
+  RegisterRoute: typeof RegisterRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -187,6 +207,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRouteWithChildren,
   LoginRoute: LoginRoute,
+  RegisterRoute: RegisterRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,3 +1,5 @@
+import { handleApiError, prepareRequestBody } from './apiHelpers'
+
 // Authentication service to handle Django backend integration
 export interface User {
     id: number
@@ -14,10 +16,12 @@ export interface RegisterCredentials {
     username: string
     email: string
     password: string
+    firstName: string
+    lastName?: string
 }
 
 class AuthService {
-    private apiUrl = `${import.meta.env.VITE_API_BASE_URL}/api/` // Update with your Django backend URL
+    private apiUrl = `${import.meta.env.VITE_API_BASE_URL}` // Update with your Django backend URL
 
     // Login method
     async login(credentials: LoginCredentials): Promise<User> {
@@ -54,29 +58,23 @@ class AuthService {
 
     // New register method
     async register(credentials: RegisterCredentials): Promise<User> {
-        const response = await fetch(`${this.apiUrl}/auth/register/`, {
+        const body = prepareRequestBody(credentials)
+
+        const response = await fetch(`${this.apiUrl}/register/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(credentials),
+            body: JSON.stringify(body),
         })
 
-        // TODO: Handle errors more gracefully at registration screen
+        // Handle API errors
         if (!response.ok) {
-            throw new Error('Registration failed')
+            await handleApiError(response)
         }
 
         // TODO: Ensure data structure matches your backend response
         const data = await response.json()
-
-        console.log('Registration response data:', data) // Debugging line
-
-        // Store token in localStorage (adjust based on Django auth setup)
-        // if (data.token) {
-        //     localStorage.setItem('authToken', data.token)
-        // }
-
         return data.user
     }
 

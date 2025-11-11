@@ -60,7 +60,7 @@ class AuthService {
     async register(credentials: RegisterCredentials): Promise<User> {
         const body = prepareRequestBody(credentials)
 
-        const response = await fetch(`${this.apiUrl}/register/`, {
+        const response = await fetch(`${this.apiUrl}/users/register/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -120,7 +120,7 @@ class AuthService {
         }
 
         try {
-            const response = await fetch(`${this.apiUrl}/auth/user/`, {
+            const response = await fetch(`${this.apiUrl}/users/me/`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },

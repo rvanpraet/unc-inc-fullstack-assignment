@@ -5,6 +5,7 @@ from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
 from django.core.validators import EmailValidator
 
+# Serializer for user registration
 class RegisterSerializer(serializers.ModelSerializer):
     # username field validator using DRF
     username = serializers.CharField(
@@ -65,3 +66,10 @@ class RegisterSerializer(serializers.ModelSerializer):
         # Password should be hashed when using create_user method
         user = User.objects.create_user(**validated_data)
         return user
+
+
+# Serializer for user details
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ("id", "username", "email", "first_name", "last_name")

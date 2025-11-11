@@ -8,6 +8,8 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { mapServerErrorsToForm } from '../lib/formHelpers'
 import type { ApiError } from '../types/error'
+import { FormTextField } from '../components/FormTextField'
+import { GeneralFormError } from '../components/GeneralFormError'
 
 const fallback = '/articles' as const
 
@@ -108,78 +110,53 @@ function RegisterComponent() {
                 </div>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 text-neutral-900">
-                    {generalError && (
-                        <div className="rounded-md bg-red-50 p-3 text-sm text-red-800">{generalError}</div>
-                    )}
+                    {generalError && <GeneralFormError message={generalError} />}
 
-                    <div className="space-y-2">
-                        <label htmlFor="username" className="block text-sm font-medium text-neutral-700">
-                            Username
-                        </label>
-                        <input
-                            id="username"
-                            type="text"
-                            {...register('username')}
-                            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm transition-colors focus:border-neutral-900 focus:outline-none focus:ring-1 focus:ring-neutral-900"
-                        />
-                        {errors.username && <p className="text-sm text-red-600">{errors.username.message}</p>}
-                        {/* {serverErrors.username && <p className="text-sm text-red-600">{serverErrors.username[0]}</p>} */}
-                    </div>
+                    <FormTextField<RegisterFormData>
+                        id="username"
+                        label="Username"
+                        type="text"
+                        name="username"
+                        register={register}
+                        error={errors.username}
+                    />
 
-                    <div className="space-y-2">
-                        <label htmlFor="password" className="block text-sm font-medium text-neutral-700">
-                            Password
-                        </label>
-                        <input
-                            id="password"
-                            type="password"
-                            {...register('password')}
-                            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm transition-colors focus:border-neutral-900 focus:outline-none focus:ring-1 focus:ring-neutral-900"
-                        />
-                        {errors.password && <p className="text-sm text-red-600">{errors.password.message}</p>}
-                        {/* {serverErrors.password && <p className="text-sm text-red-600">{serverErrors.password[0]}</p>} */}
-                    </div>
+                    <FormTextField<RegisterFormData>
+                        id="password"
+                        label="Password"
+                        type="password"
+                        name="password"
+                        register={register}
+                        error={errors.password}
+                    />
 
-                    <div className="space-y-2">
-                        <label htmlFor="email" className="block text-sm font-medium text-neutral-700">
-                            Email
-                        </label>
-                        <input
-                            id="email"
-                            type="email"
-                            {...register('email')}
-                            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm transition-colors focus:border-neutral-900 focus:outline-none focus:ring-1 focus:ring-neutral-900"
-                        />
-                        {errors.email && <p className="text-sm text-red-600">{errors.email.message}</p>}
-                        {/* {serverErrors.email && <p className="text-sm text-red-600">{serverErrors.email[0]}</p>} */}
-                    </div>
+                    <FormTextField<RegisterFormData>
+                        id="email"
+                        label="Email"
+                        type="email"
+                        name="email"
+                        register={register}
+                        error={errors.email}
+                    />
 
-                    <div className="space-y-2">
-                        <label htmlFor="firstName" className="block text-sm font-medium text-neutral-700">
-                            First name
-                        </label>
-                        <input
-                            id="firstName"
-                            type="text"
-                            {...register('firstName')}
-                            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm transition-colors focus:border-neutral-900 focus:outline-none focus:ring-1 focus:ring-neutral-900"
-                        />
-                        {errors.firstName && <p className="text-sm text-red-600">{errors.firstName.message}</p>}
-                        {/* {serverErrors.firstName && <p className="text-sm text-red-600">{serverErrors.firstName[0]}</p>} */}
-                    </div>
+                    <FormTextField<RegisterFormData>
+                        id="firstName"
+                        label="First name"
+                        type="text"
+                        name="firstName"
+                        register={register}
+                        error={errors.firstName}
+                    />
 
-                    <div className="space-y-2">
-                        <label htmlFor="lastName" className="block text-sm font-medium text-neutral-700">
-                            Last name <span className="text-neutral-400">(optional)</span>
-                        </label>
-                        <input
-                            id="lastName"
-                            type="text"
-                            {...register('lastName')}
-                            className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm transition-colors focus:border-neutral-900 focus:outline-none focus:ring-1 focus:ring-neutral-900"
-                        />
-                        {/* {serverErrors.lastName && <p className="text-sm text-red-600">{serverErrors.lastName[0]}</p>} */}
-                    </div>
+                    <FormTextField<RegisterFormData>
+                        id="lastName"
+                        label="Last name"
+                        type="text"
+                        name="lastName"
+                        register={register}
+                        error={errors.lastName}
+                        optional
+                    />
 
                     <button
                         type="submit"

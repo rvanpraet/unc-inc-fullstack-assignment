@@ -144,11 +144,11 @@ class AuthService {
     }
 
     logout(): void {
-        localStorage.removeItem('authToken')
+        localStorage.removeItem('accessToken')
     }
 
     isAuthenticated(): boolean {
-        return !!localStorage.getItem('authToken')
+        return !!localStorage.getItem('accessToken')
     }
 }
 

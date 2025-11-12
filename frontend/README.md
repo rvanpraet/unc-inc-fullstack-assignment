@@ -12,6 +12,14 @@ React + TypeScript + Vite application with Tanstack Router and React Query.
 npm install
 ```
 
+## Configuration
+
+Create a `.env` file in the frontend root directory with required environment variables
+
+```
+VITE_API_BASE_URL=http://127.0.0.1:8000/api
+```
+
 ## Development
 
 Start the development server:

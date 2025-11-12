@@ -21,9 +21,9 @@ class ArticleService {
     //     this.apiUrl = `${import.meta.env.VITE_API_BASE_URL}/articles`
     // }
 
-    async getArticles() {
+    async getArticles(search?: string) {
         // TODO: Pagination, filtering, search
-        const response = await apiFetch(this.apiUrl + '/')
+        const response = await apiFetch(this.apiUrl + '/' + (search ? `?search=${encodeURIComponent(search)}` : ''))
 
         // TODO: Error handling
         const data = await response.json()

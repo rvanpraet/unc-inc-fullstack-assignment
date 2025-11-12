@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { articlesQueryOptions } from '../query/articles/articlesQueryOptions'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { IconButtonNavLink } from '../components/IconButtonNavLink'
@@ -9,9 +9,17 @@ import type { Article } from '../lib/articles'
 import { ButtonNavLink } from '../components/ButtonNavLink'
 import { IconButton } from '../components/IconButton'
 import { useDeleteArticle } from '../query/articles/useDeleteArticle'
+import { SearchField } from '../components/SearchField'
+import { z } from 'zod'
+
+const articlesSearchSchema = z.object({
+    search: z.string().optional().catch(''),
+})
 
 export const Route = createFileRoute('/_auth/articles/')({
-    loader: ({ context: { queryClient } }) => queryClient.ensureQueryData(articlesQueryOptions),
+    validateSearch: articlesSearchSchema,
+    loaderDeps: ({ search }) => ({ search: search.search }), // I find this kind of verbose but ok
+    loader: ({ context: { queryClient }, deps }) => queryClient.ensureQueryData(articlesQueryOptions(deps.search)),
     component: ArticlesPage,
     errorComponent: () => <div>Failed to load articles.</div>,
 
@@ -21,7 +29,10 @@ export const Route = createFileRoute('/_auth/articles/')({
 
 function ArticlesPage() {
     // Query logic
-    const articlesQuery = useSuspenseQuery(articlesQueryOptions)
+    const navigate = useNavigate({ from: Route.fullPath })
+    const { search } = Route.useSearch()
+
+    const articlesQuery = useSuspenseQuery(articlesQueryOptions(search))
     const articles: Article[] = articlesQuery.data
     const isLoading = articlesQuery.isLoading
 
@@ -29,6 +40,13 @@ function ArticlesPage() {
     const deleteArticle = useDeleteArticle()
     const onDeleteClick = (articleId: number) => {
         deleteArticle.mutate(articleId)
+    }
+
+    // Search handling
+    const handleSearchChange = (newSearch: string) => {
+        navigate({
+            search: { search: newSearch || undefined },
+        })
     }
 
     // Render logic
@@ -45,6 +63,11 @@ function ArticlesPage() {
     return (
         <>
             <OverviewTitle />
+            <SearchField
+                value={search || ''}
+                onChange={handleSearchChange}
+                placeholder="Search articles by title or content..."
+            />
             {deleteArticle.error && (
                 <div className="rounded-md bg-red-50 p-3 text-sm text-red-800">{deleteArticle.error.message}</div>
             )}

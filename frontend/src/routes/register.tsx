@@ -72,6 +72,7 @@ function RegisterComponent() {
         }
     }
 
+    // Could make a separate component for this success message
     if (isSuccess) {
         return (
             <div className="flex min-h-screen items-center justify-center bg-neutral-50 px-4">
@@ -90,6 +91,7 @@ function RegisterComponent() {
                         <h2 className="text-2xl font-semibold text-neutral-900">Registration successful</h2>
                         <p className="text-neutral-600">Your account has been created. You can now log in.</p>
                     </div>
+
                     <Link
                         to="/login"
                         className="flex w-full items-center justify-center rounded-md bg-neutral-900 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-neutral-800"
@@ -152,7 +154,7 @@ function RegisterComponent() {
                     optional
                 />
 
-                <Button type="submit" disabled={isSubmitting}>
+                <Button className="mt-8" type="submit" disabled={isSubmitting}>
                     {isSubmitting ? 'Creating account...' : 'Create account'}
                 </Button>
 

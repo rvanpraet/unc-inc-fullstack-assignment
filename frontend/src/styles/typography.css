@@ -1,0 +1,6 @@
+@layer utilities {
+    .heading-1 {
+        @apply text-4xl md:text-5xl lg:text-5xl font-semibold;
+        line-height: 1.1;
+    }
+}

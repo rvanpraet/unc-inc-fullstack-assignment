@@ -2,15 +2,23 @@
 
 import { useState, useEffect, useMemo } from 'react'
 import { debounce } from '../lib/utils/debounce'
+import { twMerge } from 'tailwind-merge'
 
 interface SearchFieldProps {
     value: string
     onChange: (value: string) => void
     placeholder?: string
     debounceMs?: number
+    className?: string
 }
 
-export function SearchField({ value, onChange, placeholder = 'Search...', debounceMs = 400 }: SearchFieldProps) {
+export function SearchField({
+    value,
+    onChange,
+    placeholder = 'Search...',
+    debounceMs = 400,
+    className = '',
+}: SearchFieldProps) {
     const [localValue, setLocalValue] = useState(value)
 
     const debouncedOnChange = useMemo(
@@ -35,8 +43,10 @@ export function SearchField({ value, onChange, placeholder = 'Search...', deboun
         return () => debouncedOnChange.cancel()
     }, [localValue, debouncedOnChange])
 
+    const classes = twMerge('mb-6', className)
+
     return (
-        <div className="mb-6">
+        <div className={classes}>
             <input
                 type="text"
                 value={localValue}

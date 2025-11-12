@@ -25,7 +25,7 @@ function ArticleDetailPage() {
     return (
         <section className="grid gap-4 text-neutral-900">
             <div className="text-start space-y-2">
-                <h1 className="text-lg font-semibold">{article.title}</h1>
+                <h1 className="heading-1 mb-6">{article.title}</h1>
                 <div className="text-base">{article.content}</div>
             </div>
 

@@ -32,7 +32,7 @@ function ArticleEditPage() {
 
     return (
         <>
-            <h1 className="text-xl font-semibold mb-16">Edit article</h1>
+            <h1 className="heading-1 mb-16">Edit article</h1>
             <ArticleForm
                 onSubmit={onSubmitForm}
                 initialData={article}

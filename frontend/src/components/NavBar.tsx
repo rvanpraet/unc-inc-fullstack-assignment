@@ -7,8 +7,8 @@ export default function NavBar() {
     const { isAuthenticated } = useAuth()
 
     return (
-        <nav className="absolute top-0 z-40 w-full px-4">
-            <div className="w-full px-4">
+        <nav className="absolute top-0 z-40 w-full max-md:px-4">
+            <div className="w-full">
                 <div className="flex w-full items-center justify-between h-16">
                     {/* Auth Actions */}
                     <div className="w-full flex items-center justify-between">

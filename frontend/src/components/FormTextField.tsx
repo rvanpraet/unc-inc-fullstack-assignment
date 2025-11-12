@@ -22,7 +22,7 @@ export function FormTextField<T extends FieldValues>({
     optional = false,
     className = '',
 }: FormTextFieldProps<T>) {
-    const classes = twMerge('space-y-2', className)
+    const classes = twMerge('space-y-0.5', className)
     return (
         <div className={classes}>
             <label htmlFor={id} className="block text-sm font-medium text-neutral-700">

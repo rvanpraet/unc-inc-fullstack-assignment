@@ -92,7 +92,7 @@ function LoginComponent() {
                     error={errors.password}
                 />
 
-                <Button type="submit" disabled={isSubmitting}>
+                <Button type="submit" disabled={isSubmitting} className="mt-4">
                     {isSubmitting ? 'Signing in...' : 'Sign in'}
                 </Button>
 

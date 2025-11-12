@@ -11,6 +11,7 @@ import { IconButton } from '../components/IconButton'
 import { useDeleteArticle } from '../query/articles/useDeleteArticle'
 import { SearchField } from '../components/SearchField'
 import { z } from 'zod'
+import { GeneralErrorMessage } from '../components/GeneralErrorMessage'
 
 const articlesSearchSchema = z.object({
     search: z.string().optional().catch(''),
@@ -60,14 +61,19 @@ function ArticlesPage() {
     return (
         <>
             <OverviewTitle />
-            <SearchField value={search || ''} onChange={handleSearchChange} placeholder="Search articles by title..." />
-            {deleteArticle.error && (
-                <div className="rounded-md bg-red-50 p-3 text-sm text-red-800">{deleteArticle.error.message}</div>
-            )}
+            <SearchField
+                className="max-w-sm"
+                value={search || ''}
+                onChange={handleSearchChange}
+                placeholder="Search articles by title..."
+            />
+            {deleteArticle.error && <GeneralErrorMessage message={deleteArticle.error.message} />}
 
             {articles.length === 0 && <p className="text-neutral-500">No articles found.</p>}
             {articles.length > 0 && (
-                <ul className="space-y-2">
+                // Fixed the max height to avoid overflow issues with many articles
+                // Ideally would have pagination
+                <ul className="space-y-2 overflow-y-scroll max-h-[33vh]">
                     {articles.map((article) => (
                         <li
                             key={article.id}
@@ -111,5 +117,5 @@ function ArticlesPage() {
 }
 
 function OverviewTitle() {
-    return <h1 className="font-semibold text-2xl self-start mb-16 text-start">Articles Overview</h1>
+    return <h1 className="heading-1 mb-16">Articles Overview</h1>
 }

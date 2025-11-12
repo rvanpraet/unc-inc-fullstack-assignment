@@ -10,7 +10,7 @@ Django REST API for the articles application.
 
 ## Installation
 
-1. Navigate to the backend directory:
+1. From the root, navigate to the backend directory in your terminal:
 
 ```bash
 cd backend

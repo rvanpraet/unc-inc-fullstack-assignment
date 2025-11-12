@@ -2,9 +2,9 @@
 
 ## Over Dit Project
 
-Dit project werd ontwikkeld als assessment voor mijn sollicitatie bij Unc Inc.
+Dit project werd ontwikkeld als assessment voor Unc Inc.
 
-Het bestaat uit een React frontend met TypeScript en een Django REST API backend voor het beheren van artikelen met authenticatie.
+Het project bestaat uit een React TypeScript frontend en een Django REST API backend voor het beheren van artikelen met authenticatie.
 
 <br>
 
@@ -27,7 +27,7 @@ Bij het analyseren van de opdracht heb ik bewust een opdeling gemaakt op basis v
 - React Query voor state management en API calls
 - Token-gebaseerde autorisatie flow
 
-Deze analyse heeft de implementatievolgorde bepaald: eerst de basis infrastructuur, dan authenticatie (het meest kritische en onbekende element), en uiteindelijk de CRUD functionaliteit voor artikelen.
+Deze analyse heeft de implementatievolgorde bepaald: eerst de basis infrastructuur, dan authenticatie en routing (de meest kritische en onbekende elementen), en uiteindelijk de CRUD functionaliteit voor artikelen.
 
 <br>
 
@@ -49,7 +49,7 @@ Deze analyse heeft de implementatievolgorde bepaald: eerst de basis infrastructu
 - TypeScript voor type safety
 - Vite als build tool voor snelle development
 
-Deze keuzes waren ambitieus maar weloverwogen - voornamelijk Tanstack en een goede JWT flow creëren brachten een leercurve met zich mee die de ontwikkeltijd beïnvloedde, maar resulteerden in een moderne, schaalbare architectuur.
+Deze keuzes waren ambitieus maar weloverwogen - voornamelijk Tanstack en een goede JWT flow creëren brachten een leercurve met zich mee die de ontwikkeltijd beïnvloedde, maar resulteerden in een naar mijn gevoel moderne, schaalbare architectuur.
 
 <br>
 
@@ -73,10 +73,30 @@ Deze keuzes waren ambitieus maar weloverwogen - voornamelijk Tanstack en een goe
 
 <br>
 
-**Reflectie**
-Dit project heeft mijn data-side development vaardigheden aangescherpt na een periode van primair visueel werk. De unit tests zijn toegevoegd met AI-ondersteuning, maar ik besef dat verdere verdieping in test best practices nodig is voor productie-ready code.
+## Reflectie
 
----
+Dit project was leuk en uitdagend, en heeft mijn data-side development vaardigheden aangescherpt na een periode van primair visueel werk.
+
+### Basisvereisten
+
+De meeste basisvereisten zijn vervuld, maar nog niet helemaal bug-free.
+
+### Extra features
+
+#### Toegevoegde features:
+
+- Search op titel in frontend en backend
+- Caching in frontend met Tanstack
+- Automatische code-splitting in React met Tanstack
+- Unit tests frontend en backend
+
+#### Onderzoek gedaan, niet geimplementeerd:
+
+- File/afbeelding opslag in backend
+- Docker en GitHub Actions
+- Backend caching
+
+<br>
 
 ## Quick Start
 

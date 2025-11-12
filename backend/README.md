@@ -6,7 +6,7 @@ Django REST API for the articles application.
 
 - Python 3.10+ (Preferable 3.14)
 - pip
-- If you are using pyenv the .python-version file will dictate the version
+- If you are using `pyenv` the .python-version file will dictate the version
 
 ## Installation
 

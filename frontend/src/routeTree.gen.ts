@@ -14,6 +14,8 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthArticlesRouteImport } from './routes/_auth.articles'
+import { Route as AuthArticlesIndexRouteImport } from './routes/_auth.articles.index'
+import { Route as AuthArticlesCreateRouteImport } from './routes/_auth.articles.create'
 import { Route as AuthArticlesArticleIdRouteImport } from './routes/_auth.articles.$articleId'
 import { Route as AuthArticlesArticleIdEditRouteImport } from './routes/_auth.articles.$articleId.edit'
 
@@ -41,6 +43,16 @@ const AuthArticlesRoute = AuthArticlesRouteImport.update({
   path: '/articles',
   getParentRoute: () => AuthRoute,
 } as any)
+const AuthArticlesIndexRoute = AuthArticlesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthArticlesRoute,
+} as any)
+const AuthArticlesCreateRoute = AuthArticlesCreateRouteImport.update({
+  id: '/create',
+  path: '/create',
+  getParentRoute: () => AuthArticlesRoute,
+} as any)
 const AuthArticlesArticleIdRoute = AuthArticlesArticleIdRouteImport.update({
   id: '/$articleId',
   path: '/$articleId',
@@ -59,14 +71,17 @@ export interface FileRoutesByFullPath {
   '/register': typeof RegisterRoute
   '/articles': typeof AuthArticlesRouteWithChildren
   '/articles/$articleId': typeof AuthArticlesArticleIdRouteWithChildren
+  '/articles/create': typeof AuthArticlesCreateRoute
+  '/articles/': typeof AuthArticlesIndexRoute
   '/articles/$articleId/edit': typeof AuthArticlesArticleIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
-  '/articles': typeof AuthArticlesRouteWithChildren
   '/articles/$articleId': typeof AuthArticlesArticleIdRouteWithChildren
+  '/articles/create': typeof AuthArticlesCreateRoute
+  '/articles': typeof AuthArticlesIndexRoute
   '/articles/$articleId/edit': typeof AuthArticlesArticleIdEditRoute
 }
 export interface FileRoutesById {
@@ -77,6 +92,8 @@ export interface FileRoutesById {
   '/register': typeof RegisterRoute
   '/_auth/articles': typeof AuthArticlesRouteWithChildren
   '/_auth/articles/$articleId': typeof AuthArticlesArticleIdRouteWithChildren
+  '/_auth/articles/create': typeof AuthArticlesCreateRoute
+  '/_auth/articles/': typeof AuthArticlesIndexRoute
   '/_auth/articles/$articleId/edit': typeof AuthArticlesArticleIdEditRoute
 }
 export interface FileRouteTypes {
@@ -87,14 +104,17 @@ export interface FileRouteTypes {
     | '/register'
     | '/articles'
     | '/articles/$articleId'
+    | '/articles/create'
+    | '/articles/'
     | '/articles/$articleId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/login'
     | '/register'
-    | '/articles'
     | '/articles/$articleId'
+    | '/articles/create'
+    | '/articles'
     | '/articles/$articleId/edit'
   id:
     | '__root__'
@@ -104,6 +124,8 @@ export interface FileRouteTypes {
     | '/register'
     | '/_auth/articles'
     | '/_auth/articles/$articleId'
+    | '/_auth/articles/create'
+    | '/_auth/articles/'
     | '/_auth/articles/$articleId/edit'
   fileRoutesById: FileRoutesById
 }
@@ -151,6 +173,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthArticlesRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_auth/articles/': {
+      id: '/_auth/articles/'
+      path: '/'
+      fullPath: '/articles/'
+      preLoaderRoute: typeof AuthArticlesIndexRouteImport
+      parentRoute: typeof AuthArticlesRoute
+    }
+    '/_auth/articles/create': {
+      id: '/_auth/articles/create'
+      path: '/create'
+      fullPath: '/articles/create'
+      preLoaderRoute: typeof AuthArticlesCreateRouteImport
+      parentRoute: typeof AuthArticlesRoute
+    }
     '/_auth/articles/$articleId': {
       id: '/_auth/articles/$articleId'
       path: '/$articleId'
@@ -183,10 +219,14 @@ const AuthArticlesArticleIdRouteWithChildren =
 
 interface AuthArticlesRouteChildren {
   AuthArticlesArticleIdRoute: typeof AuthArticlesArticleIdRouteWithChildren
+  AuthArticlesCreateRoute: typeof AuthArticlesCreateRoute
+  AuthArticlesIndexRoute: typeof AuthArticlesIndexRoute
 }
 
 const AuthArticlesRouteChildren: AuthArticlesRouteChildren = {
   AuthArticlesArticleIdRoute: AuthArticlesArticleIdRouteWithChildren,
+  AuthArticlesCreateRoute: AuthArticlesCreateRoute,
+  AuthArticlesIndexRoute: AuthArticlesIndexRoute,
 }
 
 const AuthArticlesRouteWithChildren = AuthArticlesRoute._addFileChildren(

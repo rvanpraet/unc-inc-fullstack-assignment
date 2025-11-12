@@ -55,8 +55,6 @@ class AuthService {
         // Fetch and return current user data
         const user = await this.getCurrentUser()
 
-        console.log('Fetched user after login ::: ', user)
-
         if (!user) {
             throw new Error('Failed to fetch user data after login')
         }
@@ -89,8 +87,6 @@ class AuthService {
 
     async getCurrentUser(): Promise<User | null> {
         const token = localStorage.getItem('accessToken')
-
-        console.log('Getting current user with token ::: ', token)
 
         // No token means no authenticated user
         if (!token) {
@@ -150,10 +146,12 @@ class AuthService {
             body: JSON.stringify({ refresh: refreshToken }),
         })
 
+        // Refresh attempt failed
         if (!response.ok) {
             return false
         }
 
+        // Refresh successful, store new access token and return boolean response
         const data = await response.json()
         localStorage.setItem('accessToken', data.access)
         return !!data.access

@@ -22,8 +22,12 @@ class ArticleService {
     // }
 
     async getArticles(search?: string) {
+        const baseUrl = this.apiUrl + '/'
+        const searchParam = search ? `?search=${encodeURIComponent(search)}` : ''
+        const fetchUrl = baseUrl + searchParam
+
         // TODO: Pagination, filtering, search
-        const response = await apiFetch(this.apiUrl + '/' + (search ? `?search=${encodeURIComponent(search)}` : ''))
+        const response = await apiFetch(fetchUrl)
 
         // TODO: Error handling
         const data = await response.json()

@@ -35,7 +35,7 @@ export function MainLayout({
             <div className={wrapperClasses}>
                 {(title || subTitle) && (
                     <div className="space-t-2 space-b-4 md:space-b-6 lg:space-b-12 text-center">
-                        {title && <h1 className="text-2xl font-semibold text-neutral-900">{title}</h1>}
+                        {title && <h1 className="text-2xl font-semibold text-neutral-900 mb-8">{title}</h1>}
                         {subTitle && <p className="text-sm text-neutral-600">{subTitle}</p>}
                     </div>
                 )}

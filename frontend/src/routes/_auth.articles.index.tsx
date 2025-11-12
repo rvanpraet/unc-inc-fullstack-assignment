@@ -55,55 +55,52 @@ function ArticlesPage() {
     if (isLoading) {
         return <p>Loading articles...</p>
     }
-    if (!articles || articles.length === 0) {
-        return <p className="text-neutral-500">No articles found.</p>
-    }
 
     // Main render
     return (
         <>
             <OverviewTitle />
-            <SearchField
-                value={search || ''}
-                onChange={handleSearchChange}
-                placeholder="Search articles by title or content..."
-            />
+            <SearchField value={search || ''} onChange={handleSearchChange} placeholder="Search articles by title..." />
             {deleteArticle.error && (
                 <div className="rounded-md bg-red-50 p-3 text-sm text-red-800">{deleteArticle.error.message}</div>
             )}
-            <ul className="space-y-2">
-                {articles.map((article) => (
-                    <li
-                        key={article.id}
-                        className="flex items-center justify-between rounded-md border border-neutral-200 bg-white px-4 py-3 not-last:mb-4"
-                    >
-                        <h2 className="text-lg font-medium text-neutral-900 pr-2">{article.title}</h2>
 
-                        <div className="flex items-center gap-1">
-                            <IconButtonNavLink
-                                to="/articles/$articleId"
-                                params={{ articleId: String(article.id) }}
-                                icon={<ViewIcon />}
-                                label="View article"
-                                variant="view"
-                            />
-                            <IconButtonNavLink
-                                to="/articles/$articleId/edit"
-                                params={{ articleId: String(article.id) }}
-                                icon={<EditIcon />}
-                                label="Edit article"
-                                variant="edit"
-                            />
-                            <IconButton
-                                onClick={() => onDeleteClick(article.id)}
-                                icon={<DeleteIcon />}
-                                label="Delete article"
-                                variant="delete"
-                            />
-                        </div>
-                    </li>
-                ))}
-            </ul>
+            {articles.length === 0 && <p className="text-neutral-500">No articles found.</p>}
+            {articles.length > 0 && (
+                <ul className="space-y-2">
+                    {articles.map((article) => (
+                        <li
+                            key={article.id}
+                            className="flex items-center justify-between rounded-md border border-neutral-200 bg-white px-4 py-3 not-last:mb-4"
+                        >
+                            <h2 className="text-lg font-medium text-neutral-900 pr-2">{article.title}</h2>
+
+                            <div className="flex items-center gap-1">
+                                <IconButtonNavLink
+                                    to="/articles/$articleId"
+                                    params={{ articleId: String(article.id) }}
+                                    icon={<ViewIcon />}
+                                    label="View article"
+                                    variant="view"
+                                />
+                                <IconButtonNavLink
+                                    to="/articles/$articleId/edit"
+                                    params={{ articleId: String(article.id) }}
+                                    icon={<EditIcon />}
+                                    label="Edit article"
+                                    variant="edit"
+                                />
+                                <IconButton
+                                    onClick={() => onDeleteClick(article.id)}
+                                    icon={<DeleteIcon />}
+                                    label="Delete article"
+                                    variant="delete"
+                                />
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            )}
             <div className="mt-16 text-end">
                 <ButtonNavLink to="/articles/create" variant="secondary">
                     Add article

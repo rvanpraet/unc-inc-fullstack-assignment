@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
+import { debounce } from '../lib/utils/debounce'
 
 interface SearchFieldProps {
     value: string
@@ -12,6 +13,16 @@ interface SearchFieldProps {
 export function SearchField({ value, onChange, placeholder = 'Search...', debounceMs = 400 }: SearchFieldProps) {
     const [localValue, setLocalValue] = useState(value)
 
+    const debouncedOnChange = useMemo(
+        () =>
+            debounce((newValue: string) => {
+                if (newValue !== value) {
+                    onChange(newValue)
+                }
+            }, debounceMs),
+        [onChange, debounceMs, value]
+    )
+
     // Sync local value when prop value changes (e.g., URL updates)
     useEffect(() => {
         setLocalValue(value)
@@ -19,14 +30,10 @@ export function SearchField({ value, onChange, placeholder = 'Search...', deboun
 
     // Debounce the onChange callback
     useEffect(() => {
-        const timer = setTimeout(() => {
-            if (localValue !== value) {
-                onChange(localValue)
-            }
-        }, debounceMs)
+        debouncedOnChange(localValue)
 
-        return () => clearTimeout(timer)
-    }, [localValue, value, onChange, debounceMs])
+        return () => debouncedOnChange.cancel()
+    }, [localValue, debouncedOnChange])
 
     return (
         <div className="mb-6">

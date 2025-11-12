@@ -67,7 +67,7 @@ describe('Login Page', () => {
         await user.type(usernameInput, 'testuser')
         await user.type(passwordInput, 'password123')
 
-        expect(usernameInput.value).not('testuser')
+        expect(usernameInput.value).toBe('testuser')
         expect(passwordInput.value).toBe('password123')
     })
 

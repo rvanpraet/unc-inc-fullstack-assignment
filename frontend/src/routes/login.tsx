@@ -12,15 +12,14 @@ import { GeneralFormError } from '../components/GeneralFormError'
 import { MainLayout } from '../layouts/MainLayout'
 import { Button } from '../components/Button'
 
-const fallback = '/articles' as const
-
 export const Route = createFileRoute('/login')({
-    validateSearch: z.object({
-        redirect: z.string().optional().catch(''),
-    }),
-    beforeLoad: ({ context, search }) => {
-        if (context.auth.isAuthenticated) {
-            throw redirect({ to: search.redirect || fallback })
+    // Check if user is already authenticated and should be redirected to the authenticated area
+    beforeLoad: async ({ context }) => {
+        const isAuthenticated = await context.auth.getCurrentUser()
+
+        if (isAuthenticated) {
+            console.log('redirecting in login ::: ', isAuthenticated)
+            throw redirect({ to: '/' })
         }
     },
     component: LoginComponent,

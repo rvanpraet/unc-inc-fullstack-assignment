@@ -30,19 +30,31 @@ export function AuthProvider({ children }: AuthProviderProps) {
         authService.logout()
     }, [])
 
-    useEffect(() => {
-        const fetchUser = async () => {
-            const currentUser = await authService.getCurrentUser()
-            setUser(currentUser)
-            setIsAuthenticated(!!currentUser)
-            setIsLoading(false)
-        }
+    const getCurrentUser = async () => {
+        const currentUser = await authService.getCurrentUser()
+        const authenticated = !!currentUser
 
-        fetchUser()
-    }, [])
+        setUser(currentUser)
+        setIsAuthenticated(authenticated)
+
+        return authenticated
+    }
+
+    // useEffect(() => {
+    //     const fetchUser = async () => {
+    //         const currentUser = await authService.getCurrentUser()
+    //         setUser(currentUser)
+    //         setIsAuthenticated(!!currentUser)
+    //         setIsLoading(false)
+    //     }
+
+    //     fetchUser()
+    // }, [])
 
     return (
-        <AuthContext.Provider value={{ user, isLoading, isAuthenticated, login, register, logout, getToken }}>
+        <AuthContext.Provider
+            value={{ user, isLoading, isAuthenticated, login, register, logout, getToken, getCurrentUser }}
+        >
             {children}
         </AuthContext.Provider>
     )

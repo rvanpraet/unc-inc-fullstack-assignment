@@ -9,6 +9,7 @@ export interface AuthContextType {
     register: (data: RegisterCredentials) => Promise<User>
     logout: () => void
     getToken: () => string | null
+    getCurrentUser: () => Promise<boolean>
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined)

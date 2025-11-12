@@ -1,62 +1,57 @@
 // import * as React from 'react'
 // import { Link } from '@tanstack/react-router'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, redirect } from '@tanstack/react-router'
 import { MainLayout } from '../layouts/MainLayout'
+import { ButtonNavLink } from '../components/ButtonNavLink'
+import { useAuth } from '../hooks/useAuth'
 
 export const Route = createFileRoute('/')({
     component: HomeComponent,
+    beforeLoad: async ({ context, location }) => {
+        await context.auth.getCurrentUser()
+
+        console.log('Root route beforeLoad check ::: ', context.auth)
+        if (context.auth.isAuthenticated) {
+            throw redirect({
+                to: '/articles',
+                search: {
+                    redirect: location.href,
+                },
+            })
+        }
+    },
 })
 
 function HomeComponent() {
+    const { isAuthenticated } = useAuth()
     return (
         <MainLayout
             title="Home Page"
             subTitle="Welcome to the Unc Inc Fullstack Assignment. Where would you like to go next?"
         >
-            <div className="flex flex-row justify-center gap-4">
-                <Link to="/login" className="text-blue-500 hover:underline">
-                    Login
-                </Link>
-                <Link to="/register" className="text-blue-500 hover:underline">
-                    Register
-                </Link>
-            </div>
+            {isAuthenticated ? <AuthenticatedHomeSection /> : <UnauthenticatedHomeSection />}
         </MainLayout>
+    )
+}
 
-        // <div className="p-2 grid gap-2">
-        //   <h1 className="text-xl">Welcome!</h1>
-        //   <p className="py-4 px-2 italic bg-slate-100 dark:bg-slate-800">
-        //     <strong className="text-red-500">IMPORTANT!!!</strong> This is just an
-        //     example of how to use authenticated routes with TanStack Router.
-        //     <br />
-        //     This is NOT an example how you'd write a production-level authentication
-        //     system.
-        //     <br />
-        //     You'll need to take the concepts and patterns used in this example and
-        //     adapt then to work with your authentication flow/system for your app.
-        //   </p>
-        //   <p>
-        //     You are currently on the index route of the{' '}
-        //     <strong>authenticated-routes</strong> example.
-        //   </p>
-        //   <p>You can try going through these options.</p>
-        //   <ol className="list-disc list-inside px-2">
-        //     <li>
-        //       <Link to="/login" className="text-blue-500 hover:opacity-75">
-        //         Go to the public login page.
-        //       </Link>
-        //     </li>
-        //     <li>
-        //       <Link to="/dashboard" className="text-blue-500 hover:opacity-75">
-        //         Go to the auth-only dashboard page.
-        //       </Link>
-        //     </li>
-        //     <li>
-        //       <Link to="/invoices" className="text-blue-500 hover:opacity-75">
-        //         Go to the auth-only invoices page.
-        //       </Link>
-        //     </li>
-        //   </ol>
-        // </div>
+function AuthenticatedHomeSection() {
+    return (
+        <div className="flex flex-row justify-center gap-4">
+            <ButtonNavLink variant="secondary" to="/articles">
+                Go to Articles
+            </ButtonNavLink>
+        </div>
+    )
+}
+function UnauthenticatedHomeSection() {
+    return (
+        <div className="flex flex-row justify-center gap-4">
+            <Link to="/login" className="text-blue-500 hover:underline">
+                Login
+            </Link>
+            <Link to="/register" className="text-blue-500 hover:underline">
+                Register
+            </Link>
+        </div>
     )
 }

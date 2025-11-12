@@ -10,6 +10,8 @@ import { mapServerErrorsToForm } from '../lib/formHelpers'
 import type { ApiError } from '../types/error'
 import { FormTextField } from '../components/FormTextField'
 import { GeneralFormError } from '../components/GeneralFormError'
+import { MainLayout } from '../layouts/MainLayout'
+import { Button } from '../components/Button'
 
 const fallback = '/articles' as const
 
@@ -19,6 +21,7 @@ export const Route = createFileRoute('/register')({
         redirect: z.string().optional().catch(''),
     }),
     beforeLoad: ({ context, search }) => {
+        console.log('Register route beforeLoad check ::: ', context.auth)
         if (context.auth.isAuthenticated) {
             throw redirect({ to: search.redirect || fallback })
         }
@@ -102,78 +105,67 @@ function RegisterComponent() {
     }
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-neutral-50 px-4">
-            <div className="w-full max-w-md space-y-6 rounded-lg border border-neutral-200 bg-white p-8 shadow-sm">
-                <div className="space-y-2 text-center">
-                    <h1 className="text-2xl font-semibold text-neutral-900">Create an account</h1>
-                    <p className="text-sm text-neutral-600">Enter your details to get started</p>
-                </div>
+        <MainLayout title="Create an account" subTitle="Fill in the details to register">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 text-neutral-900">
+                {generalError && <GeneralFormError message={generalError} />}
 
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 text-neutral-900">
-                    {generalError && <GeneralFormError message={generalError} />}
+                <FormTextField<RegisterFormData>
+                    id="username"
+                    label="Username"
+                    type="text"
+                    name="username"
+                    register={register}
+                    error={errors.username}
+                />
 
-                    <FormTextField<RegisterFormData>
-                        id="username"
-                        label="Username"
-                        type="text"
-                        name="username"
-                        register={register}
-                        error={errors.username}
-                    />
+                <FormTextField<RegisterFormData>
+                    id="password"
+                    label="Password"
+                    type="password"
+                    name="password"
+                    register={register}
+                    error={errors.password}
+                />
 
-                    <FormTextField<RegisterFormData>
-                        id="password"
-                        label="Password"
-                        type="password"
-                        name="password"
-                        register={register}
-                        error={errors.password}
-                    />
+                <FormTextField<RegisterFormData>
+                    id="email"
+                    label="Email"
+                    type="email"
+                    name="email"
+                    register={register}
+                    error={errors.email}
+                />
 
-                    <FormTextField<RegisterFormData>
-                        id="email"
-                        label="Email"
-                        type="email"
-                        name="email"
-                        register={register}
-                        error={errors.email}
-                    />
+                <FormTextField<RegisterFormData>
+                    id="firstName"
+                    label="First name"
+                    type="text"
+                    name="firstName"
+                    register={register}
+                    error={errors.firstName}
+                />
 
-                    <FormTextField<RegisterFormData>
-                        id="firstName"
-                        label="First name"
-                        type="text"
-                        name="firstName"
-                        register={register}
-                        error={errors.firstName}
-                    />
+                <FormTextField<RegisterFormData>
+                    id="lastName"
+                    label="Last name"
+                    type="text"
+                    name="lastName"
+                    register={register}
+                    error={errors.lastName}
+                    optional
+                />
 
-                    <FormTextField<RegisterFormData>
-                        id="lastName"
-                        label="Last name"
-                        type="text"
-                        name="lastName"
-                        register={register}
-                        error={errors.lastName}
-                        optional
-                    />
+                <Button type="submit" disabled={isSubmitting}>
+                    {isSubmitting ? 'Creating account...' : 'Create account'}
+                </Button>
 
-                    <button
-                        type="submit"
-                        disabled={isSubmitting}
-                        className="w-full rounded-md bg-neutral-900 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                        {isSubmitting ? 'Creating account...' : 'Create account'}
-                    </button>
-
-                    <p className="text-center text-sm text-neutral-600">
-                        Already have an account?{' '}
-                        <Link to="/login" className="font-medium text-neutral-900 hover:underline">
-                            Log in
-                        </Link>
-                    </p>
-                </form>
-            </div>
-        </div>
+                <p className="text-center text-sm text-neutral-600">
+                    Already have an account?{' '}
+                    <Link to="/login" className="font-medium text-neutral-900 hover:underline">
+                        Log in
+                    </Link>
+                </p>
+            </form>
+        </MainLayout>
     )
 }

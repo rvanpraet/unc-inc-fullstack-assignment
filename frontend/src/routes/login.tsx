@@ -6,10 +6,11 @@ import { useAuth } from '../hooks/useAuth'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { mapServerErrorsToForm } from '../lib/formHelpers'
 import type { ApiError } from '../types/error'
 import { FormTextField } from '../components/FormTextField'
 import { GeneralFormError } from '../components/GeneralFormError'
+import { MainLayout } from '../layouts/MainLayout'
+import { Button } from '../components/Button'
 
 const fallback = '/articles' as const
 
@@ -25,11 +26,13 @@ export const Route = createFileRoute('/login')({
     component: LoginComponent,
 })
 
+// Login form schema
 const loginSchema = z.object({
     username: z.string().min(1, 'Username is required'),
     password: z.string().min(8, 'Password must be at least 8 characters'),
 })
 
+// Infer the form data type from the schema
 type LoginFormData = z.infer<typeof loginSchema>
 
 function LoginComponent() {
@@ -37,82 +40,70 @@ function LoginComponent() {
     const navigate = useNavigate()
     const [generalError, setGeneralError] = useState<string | null>(null)
 
+    // Form setup
     const {
         register,
         handleSubmit,
-        setError,
         formState: { errors, isSubmitting },
     } = useForm<LoginFormData>({
         resolver: zodResolver(loginSchema),
         mode: 'onSubmit',
     })
 
+    // Form submission handler
     const onSubmit = async (data: LoginFormData) => {
         try {
             setGeneralError(null)
-            await login(data.username, data.password)
-            // Navigate to articles page after successful login
+            await login(data)
+
+            console.log('Login successful, navigating to articles...')
+
             navigate({ to: '/articles' })
         } catch (e) {
             const error = e as ApiError
 
-            // In case of general error without specific field errors
-            if (!error.data) {
-                setGeneralError('Invalid username or password. Please try again.')
+            // We only want to show a general error for invalid credentials
+            if (error.data?.detail) {
+                setGeneralError(error.data.detail)
                 return
             }
-
-            // Handle field-specific errors
-            const formErrors = error.data
-            mapServerErrorsToForm(formErrors, setError)
         }
     }
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-neutral-50 px-4">
-            <div className="w-full max-w-md space-y-6 rounded-lg border border-neutral-200 bg-white p-8 shadow-sm">
-                <div className="space-y-2 text-center">
-                    <h1 className="text-2xl font-semibold text-neutral-900">Welcome back</h1>
-                    <p className="text-sm text-neutral-600">Enter your credentials to sign in</p>
-                </div>
+        <MainLayout title="Welcome back" subTitle="Enter your credentials to sign in">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 text-neutral-900">
+                {generalError && <GeneralFormError message={generalError} />}
 
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 text-neutral-900">
-                    {generalError && <GeneralFormError message={generalError} />}
+                <FormTextField<LoginFormData>
+                    id="username"
+                    label="Username"
+                    type="text"
+                    name="username"
+                    register={register}
+                    error={errors.username}
+                />
 
-                    <FormTextField<LoginFormData>
-                        id="username"
-                        label="Username"
-                        type="text"
-                        name="username"
-                        register={register}
-                        error={errors.username}
-                    />
+                <FormTextField<LoginFormData>
+                    id="password"
+                    label="Password"
+                    type="password"
+                    name="password"
+                    register={register}
+                    error={errors.password}
+                />
 
-                    <FormTextField<LoginFormData>
-                        id="password"
-                        label="Password"
-                        type="password"
-                        name="password"
-                        register={register}
-                        error={errors.password}
-                    />
+                <Button type="submit" disabled={isSubmitting}>
+                    {isSubmitting ? 'Signing in...' : 'Sign in'}
+                </Button>
 
-                    <button
-                        type="submit"
-                        disabled={isSubmitting}
-                        className="w-full rounded-md bg-neutral-900 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                        {isSubmitting ? 'Signing in...' : 'Sign in'}
-                    </button>
-
-                    <p className="text-center text-sm text-neutral-600">
-                        Don't have an account?{' '}
-                        <Link to="/register" className="font-medium text-neutral-900 hover:underline">
-                            Register
-                        </Link>
-                    </p>
-                </form>
-            </div>
-        </div>
+                <p className="text-center text-sm text-neutral-600">
+                    Don't have an account?{' '}
+                    <Link to="/register" className="font-medium text-neutral-900 hover:underline">
+                        Register
+                    </Link>
+                </p>
+            </form>
+        </MainLayout>
     )
 }

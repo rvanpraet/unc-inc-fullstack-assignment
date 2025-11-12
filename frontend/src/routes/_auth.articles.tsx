@@ -1,6 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
-// import { useAuth } from '../hooks/useAuth'
 import { fetchArticles } from '../lib/article'
+import { useAuth } from '../hooks/useAuth'
+import { MainLayout } from '../layouts/MainLayout'
 
 export const Route = createFileRoute('/_auth/articles')({
     loader: async () => {
@@ -12,11 +13,14 @@ export const Route = createFileRoute('/_auth/articles')({
 })
 
 function ArticlesPage() {
-    // const auth = useAuth()
+    const { user } = useAuth()
 
     return (
-        <section className="grid gap-2 p-2">
-            <p>You are currently on the articles route.</p>
-        </section>
+        <MainLayout title="Articles" subTitle="List of articles">
+            <section className="grid gap-2 p-2">
+                <h2>Welcome, {user?.firstName}!</h2>
+                <p>You are currently on the articles route.</p>
+            </section>
+        </MainLayout>
     )
 }

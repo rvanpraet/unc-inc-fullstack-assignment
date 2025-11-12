@@ -1,4 +1,4 @@
-import './App.css'
+import './styles/App.css'
 import { AuthProvider } from './contexts/AuthProvider'
 import InnerApp from './InnerApp'
 

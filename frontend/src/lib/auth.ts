@@ -1,10 +1,12 @@
-import { handleApiError, prepareRequestBody } from './apiHelpers'
+import { handleApiError, prepareRequestBody, transformResponse } from './apiHelpers'
 
 // Authentication service to handle Django backend integration
 export interface User {
     id: number
     username: string
     email: string
+    firstName: string
+    lastName?: string
 }
 
 export interface LoginCredentials {
@@ -25,35 +27,41 @@ class AuthService {
 
     // Login method
     async login(credentials: LoginCredentials): Promise<User> {
+        const body = prepareRequestBody(credentials)
+
+        // Fetch tokens from the backend
         const response = await fetch(`${this.apiUrl}/token/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(credentials),
+            body: JSON.stringify(body),
         })
 
-        // TODO: Handle errors more gracefully at login screen
+        // Handle API errors
         if (!response.ok) {
-            throw new Error('Login failed')
+            await handleApiError(response)
         }
 
-        // TODO: Ensure data structure matches your backend response
+        // Store tokens in localStorage
         const data = await response.json()
-        // Store token in localStorage (adjust based on your Django auth setup)
-
         if (data.access) {
             localStorage.setItem('accessToken', data.access)
         }
-
         if (data.refresh) {
             localStorage.setItem('refreshToken', data.refresh)
         }
 
-        // Check the data structure
-        console.log('Login response data:', data) // Debugging line
+        // Fetch and return current user data
+        const user = await this.getCurrentUser()
 
-        return data.user
+        console.log('Fetched user after login ::: ', user)
+
+        if (!user) {
+            throw new Error('Failed to fetch user data after login')
+        }
+
+        return user
     }
 
     // New register method
@@ -69,6 +77,7 @@ class AuthService {
         })
 
         // Handle API errors
+        // No return value because handleApiError throws and register page catches
         if (!response.ok) {
             await handleApiError(response)
         }
@@ -78,74 +87,90 @@ class AuthService {
         return data.user
     }
 
-    async refreshToken(): Promise<void> {
+    async getCurrentUser(): Promise<User | null> {
+        const token = localStorage.getItem('accessToken')
+
+        console.log('Getting current user with token ::: ', token)
+
+        // No token means no authenticated user
+        if (!token) {
+            return null
+        }
+
+        // Fetch user data from the backend
+        const response = await fetch(`${this.apiUrl}/users/me/`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+
+        // If token expired, try refresh once
+        if (response.status === 401) {
+            const refreshed = await this.refreshToken()
+
+            if (!refreshed) {
+                this.logout()
+                return null
+            }
+
+            // Retry with new access token
+            const newToken = localStorage.getItem('accessToken')
+            const retryResponse = await fetch(`${this.apiUrl}/users/me/`, {
+                headers: { Authorization: `Bearer ${newToken}` },
+            })
+
+            if (!retryResponse.ok) return null
+            return await retryResponse.json()
+        }
+
+        // Other errors results in no authenticated user
+        if (!response.ok) {
+            return null
+        }
+
+        const data = await response.json()
+        return transformResponse(data) as User
+    }
+
+    async refreshToken(): Promise<boolean> {
         const refreshToken = localStorage.getItem('refreshToken')
 
         // No refresh token means the user should not be logged in
         if (!refreshToken) {
             this.logout()
-            return
+            return false
         }
 
         // Attempt to refresh the token
-        try {
-            const response = await fetch(`${this.apiUrl}/token/refresh/`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ refresh: refreshToken }),
-            })
+        const response = await fetch(`${this.apiUrl}/token/refresh/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ refresh: refreshToken }),
+        })
 
-            if (!response.ok) {
-                this.logout()
-                return
-            }
-
-            const data = await response.json()
-            if (data.access) {
-                localStorage.setItem('accessToken', data.access)
-            }
-        } catch (error) {
-            console.error('Error refreshing token:', error)
-            this.logout()
-        }
-    }
-
-    async getCurrentUser(): Promise<User | null> {
-        const token = localStorage.getItem('accessToken')
-
-        if (!token) {
-            return null
+        if (!response.ok) {
+            return false
         }
 
-        try {
-            const response = await fetch(`${this.apiUrl}/users/me/`, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            })
-
-            if (!response.ok) {
-                this.logout()
-                return null
-            }
-
-            return await response.json()
-        } catch (error) {
-            // Debugging line
-            console.error('Error fetching current user:', error)
-
-            this.logout()
-            return null
-        }
+        const data = await response.json()
+        localStorage.setItem('accessToken', data.access)
+        return !!data.access
     }
 
     logout(): void {
         localStorage.removeItem('accessToken')
+        localStorage.removeItem('refreshToken')
     }
 
-    isAuthenticated(): boolean {
+    async isAuthenticated(): Promise<boolean> {
+        if (!localStorage.getItem('accessToken')) {
+            return false
+        }
+
+        await this.getCurrentUser()
+
         return !!localStorage.getItem('accessToken')
     }
 }

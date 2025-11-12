@@ -1,6 +1,7 @@
 // import * as React from 'react'
 // import { Link } from '@tanstack/react-router'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
+import { MainLayout } from '../layouts/MainLayout'
 
 export const Route = createFileRoute('/')({
     component: HomeComponent,
@@ -8,9 +9,19 @@ export const Route = createFileRoute('/')({
 
 function HomeComponent() {
     return (
-        <div>
-            <h1 className="text-2xl font-bold">Home Page</h1>
-        </div>
+        <MainLayout
+            title="Home Page"
+            subTitle="Welcome to the Unc Inc Fullstack Assignment. Where would you like to go next?"
+        >
+            <div className="flex flex-row justify-center gap-4">
+                <Link to="/login" className="text-blue-500 hover:underline">
+                    Login
+                </Link>
+                <Link to="/register" className="text-blue-500 hover:underline">
+                    Register
+                </Link>
+            </div>
+        </MainLayout>
 
         // <div className="p-2 grid gap-2">
         //   <h1 className="text-xl">Welcome!</h1>

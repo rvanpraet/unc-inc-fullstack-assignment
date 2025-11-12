@@ -1,38 +1,25 @@
+/* eslint-disable react-refresh/only-export-components */
 import type React from 'react'
-import type { ReactElement } from 'react'
 import { render, type RenderOptions } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { createRouter } from '@tanstack/react-router'
+import { RouterProvider, createRouter, createMemoryHistory } from '@tanstack/react-router'
 import { routeTree } from '../routeTree.gen'
 import { AuthProvider } from '../contexts/AuthProvider'
 
+// Mock auth context for testing
+const mockAuthContext = {
+    user: null,
+    isAuthenticated: false,
+    isLoading: false,
+    login: async () => {},
+    register: async () => {},
+    logout: async () => {},
+    getCurrentUser: async () => false,
+    getToken: () => null,
+}
+
 // Create a test router
-function createTestRouter() {
-    return createRouter({
-        routeTree,
-        context: {
-            queryClient: new QueryClient({
-                defaultOptions: {
-                    queries: { retry: false },
-                    mutations: { retry: false },
-                },
-            }),
-            auth: {
-                isAuthenticated: false,
-                user: null,
-                login: async () => {},
-                logout: async () => {},
-                register: async () => {},
-            },
-        },
-    })
-}
-
-interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
-    initialRoute?: string
-}
-
-function customRender(ui: ReactElement, options?: CustomRenderOptions) {
+export function createTestRouter(initialPath = '/') {
     const queryClient = new QueryClient({
         defaultOptions: {
             queries: { retry: false },
@@ -40,15 +27,63 @@ function customRender(ui: ReactElement, options?: CustomRenderOptions) {
         },
     })
 
-    const Wrapper = ({ children }: { children: React.ReactNode }) => (
+    const router = createRouter({
+        routeTree,
+        history: createMemoryHistory({
+            initialEntries: [initialPath],
+        }),
+        context: {
+            auth: mockAuthContext,
+            queryClient,
+        },
+        defaultPreload: 'intent',
+    })
+
+    return { router, queryClient }
+}
+
+// Custom render function that wraps components with necessary providers
+export function renderWithRouter(component: React.ReactElement, options?: RenderOptions & { initialPath?: string }) {
+    const { initialPath = '/', ...renderOptions } = options || {}
+    const { router, queryClient } = createTestRouter(initialPath)
+
+    function Wrapper({ children }: { children: React.ReactNode }) {
+        return (
+            <QueryClientProvider client={queryClient}>
+                <AuthProvider>{children}</AuthProvider>
+            </QueryClientProvider>
+        )
+    }
+
+    return {
+        ...render(component, { wrapper: Wrapper, ...renderOptions }),
+        router,
+        queryClient,
+    }
+}
+
+// Helper to render a route component with full router context
+export async function renderRoute(initialPath = '/') {
+    const { router, queryClient } = createTestRouter(initialPath)
+
+    const rendered = render(
         <QueryClientProvider client={queryClient}>
-            <AuthProvider>{children}</AuthProvider>
+            <AuthProvider>
+                <RouterProvider router={router} />
+            </AuthProvider>
         </QueryClientProvider>
     )
 
-    return render(ui, { wrapper: Wrapper, ...options })
+    // Wait for router to be ready
+    await router.load()
+
+    return {
+        ...rendered,
+        router,
+        queryClient,
+    }
 }
 
-// eslint-disable-next-line react-refresh/only-export-components
-export * from '@testing-library/react'
-export { customRender as render, createTestRouter }
+//
+// export * from '@testing-library/jest-dom'
+// export * from '@testing-library/react'

@@ -1,4 +1,4 @@
-import { useState, useEffect, type ReactNode, useCallback } from 'react'
+import { useState, type ReactNode, useCallback } from 'react'
 import { type LoginCredentials, type RegisterCredentials, type User, authService } from '../lib/auth'
 import { AuthContext } from './AuthContext'
 
@@ -8,7 +8,6 @@ interface AuthProviderProps {
 
 export function AuthProvider({ children }: AuthProviderProps) {
     const [user, setUser] = useState<User | null>(null)
-    const [isLoading, setIsLoading] = useState(true)
     const [isAuthenticated, setIsAuthenticated] = useState(false)
 
     const getToken = () => {
@@ -52,9 +51,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     // }, [])
 
     return (
-        <AuthContext.Provider
-            value={{ user, isLoading, isAuthenticated, login, register, logout, getToken, getCurrentUser }}
-        >
+        <AuthContext.Provider value={{ user, isAuthenticated, login, register, logout, getToken, getCurrentUser }}>
             {children}
         </AuthContext.Provider>
     )

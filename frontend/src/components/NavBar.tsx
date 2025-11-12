@@ -1,3 +1,4 @@
+import { useNavigate } from '@tanstack/react-router'
 import { useAuth } from '../hooks/useAuth'
 import { Button } from './Button'
 // import { ButtonNavLink } from './ButtonNavLink'
@@ -21,6 +22,14 @@ export default function NavBar() {
 
 function AuthenticatedNavBar() {
     const { user, logout } = useAuth()
+    const navigate = useNavigate()
+
+    const onLogoutClick = () => {
+        logout()
+
+        // Redirect to home page after logout
+        navigate({ to: '/' })
+    }
 
     return (
         <>
@@ -28,7 +37,7 @@ function AuthenticatedNavBar() {
                 Welcome, <span className="font-medium text-neutral-900">{user?.firstName}</span>
             </span>
 
-            <Button className="w-fit" onClick={logout}>
+            <Button className="w-fit" onClick={onLogoutClick}>
                 Logout
             </Button>
         </>

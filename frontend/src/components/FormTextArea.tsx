@@ -1,38 +1,34 @@
 import type { UseFormRegister, FieldValues, Path, FieldError } from 'react-hook-form'
-import { twMerge } from 'tailwind-merge'
 
-interface FormTextFieldProps<T extends FieldValues> {
+interface FormTextAreaProps<T extends FieldValues> {
     id: string
     label: string
-    type?: 'text' | 'email' | 'password'
     name: Path<T>
     register: UseFormRegister<T>
     error?: FieldError
+    rows?: number
     optional?: boolean
-    className?: string
 }
 
-export function FormTextField<T extends FieldValues>({
+export function FormTextArea<T extends FieldValues>({
     id,
     label,
-    type = 'text',
     name,
     register,
     error,
+    rows = 6,
     optional = false,
-    className = '',
-}: FormTextFieldProps<T>) {
-    const classes = twMerge('space-y-2', className)
+}: FormTextAreaProps<T>) {
     return (
-        <div className={classes}>
+        <div className="space-y-2">
             <label htmlFor={id} className="block text-sm font-medium text-neutral-700">
                 {label} {optional && <span className="text-neutral-400">(optional)</span>}
             </label>
-            <input
+            <textarea
                 id={id}
-                type={type}
+                rows={rows}
                 {...register(name)}
-                className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm transition-colors focus:border-neutral-900 focus:outline-none focus:ring-1 focus:ring-neutral-900"
+                className="w-full resize-y rounded-md border border-neutral-300 px-3 py-2 text-sm transition-colors focus:border-neutral-900 focus:outline-none focus:ring-1 focus:ring-neutral-900"
             />
             {error && <p className="text-sm text-red-600">{error.message}</p>}
         </div>

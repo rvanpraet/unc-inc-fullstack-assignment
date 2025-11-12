@@ -1,5 +1,6 @@
+import type { ArticleFormData } from '../components/ArticleForm'
 import { apiFetch } from './apiClient'
-import { prepareRequestBody, transformResponse } from './apiHelpers'
+import { handleApiError, prepareRequestBody, transformResponse } from './apiHelpers'
 
 export interface Article {
     id: number
@@ -8,13 +9,17 @@ export interface Article {
     createdAt: string
 }
 
-interface CreatePostData {
-    title: string
-    content: string
-}
-
+// Service class to handle article-related API interactions
 class ArticleService {
-    private apiUrl = `${import.meta.env.VITE_API_BASE_URL}/articles` // Update with your Django backend URL
+    // public get apiUrl: string
+    // private apiUrl = `${import.meta.env.VITE_API_BASE_URL}/articles`
+    public get apiUrl() {
+        return `${import.meta.env.VITE_API_BASE_URL}/articles`
+    }
+
+    // constructor() {
+    //     this.apiUrl = `${import.meta.env.VITE_API_BASE_URL}/articles`
+    // }
 
     async getArticles() {
         // TODO: Pagination, filtering, search
@@ -30,10 +35,33 @@ class ArticleService {
         return transformResponse<Article>(await response.json())
     }
 
-    async createArticle(articleData: CreatePostData) {
+    async createArticle(articleData: ArticleFormData) {
         const body = prepareRequestBody(articleData)
+
+        console.log('Creating article with data:', body)
+        console.log('API URL:', this.apiUrl + '/')
+
         const response = await apiFetch(this.apiUrl + '/', {
             method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(body),
+        })
+
+        // Handle API errors
+        if (!response.ok) {
+            await handleApiError(response)
+        }
+
+        return response.json()
+    }
+
+    async updateArticle(id: string, articleData: ArticleFormData) {
+        const body = prepareRequestBody(articleData)
+
+        const response = await apiFetch(`${this.apiUrl}/${id}/`, {
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },

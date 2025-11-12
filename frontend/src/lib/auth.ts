@@ -22,8 +22,9 @@ export interface RegisterCredentials {
     lastName?: string
 }
 
+// AuthService class to manage authentication-related operations
 class AuthService {
-    private apiUrl = `${import.meta.env.VITE_API_BASE_URL}` // Update with your Django backend URL
+    private apiUrl = `${import.meta.env.VITE_API_BASE_URL}`
 
     // Login method
     async login(credentials: LoginCredentials): Promise<User> {

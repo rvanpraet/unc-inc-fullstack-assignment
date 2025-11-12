@@ -17,6 +17,7 @@ import { Route as AuthArticlesRouteImport } from './routes/_auth.articles'
 import { Route as AuthArticlesIndexRouteImport } from './routes/_auth.articles.index'
 import { Route as AuthArticlesCreateRouteImport } from './routes/_auth.articles.create'
 import { Route as AuthArticlesArticleIdRouteImport } from './routes/_auth.articles.$articleId'
+import { Route as AuthArticlesArticleIdIndexRouteImport } from './routes/_auth.articles.$articleId.index'
 import { Route as AuthArticlesArticleIdEditRouteImport } from './routes/_auth.articles.$articleId.edit'
 
 const RegisterRoute = RegisterRouteImport.update({
@@ -58,6 +59,12 @@ const AuthArticlesArticleIdRoute = AuthArticlesArticleIdRouteImport.update({
   path: '/$articleId',
   getParentRoute: () => AuthArticlesRoute,
 } as any)
+const AuthArticlesArticleIdIndexRoute =
+  AuthArticlesArticleIdIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthArticlesArticleIdRoute,
+  } as any)
 const AuthArticlesArticleIdEditRoute =
   AuthArticlesArticleIdEditRouteImport.update({
     id: '/edit',
@@ -74,15 +81,16 @@ export interface FileRoutesByFullPath {
   '/articles/create': typeof AuthArticlesCreateRoute
   '/articles/': typeof AuthArticlesIndexRoute
   '/articles/$articleId/edit': typeof AuthArticlesArticleIdEditRoute
+  '/articles/$articleId/': typeof AuthArticlesArticleIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
-  '/articles/$articleId': typeof AuthArticlesArticleIdRouteWithChildren
   '/articles/create': typeof AuthArticlesCreateRoute
   '/articles': typeof AuthArticlesIndexRoute
   '/articles/$articleId/edit': typeof AuthArticlesArticleIdEditRoute
+  '/articles/$articleId': typeof AuthArticlesArticleIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -95,6 +103,7 @@ export interface FileRoutesById {
   '/_auth/articles/create': typeof AuthArticlesCreateRoute
   '/_auth/articles/': typeof AuthArticlesIndexRoute
   '/_auth/articles/$articleId/edit': typeof AuthArticlesArticleIdEditRoute
+  '/_auth/articles/$articleId/': typeof AuthArticlesArticleIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -107,15 +116,16 @@ export interface FileRouteTypes {
     | '/articles/create'
     | '/articles/'
     | '/articles/$articleId/edit'
+    | '/articles/$articleId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/login'
     | '/register'
-    | '/articles/$articleId'
     | '/articles/create'
     | '/articles'
     | '/articles/$articleId/edit'
+    | '/articles/$articleId'
   id:
     | '__root__'
     | '/'
@@ -127,6 +137,7 @@ export interface FileRouteTypes {
     | '/_auth/articles/create'
     | '/_auth/articles/'
     | '/_auth/articles/$articleId/edit'
+    | '/_auth/articles/$articleId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -194,6 +205,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthArticlesArticleIdRouteImport
       parentRoute: typeof AuthArticlesRoute
     }
+    '/_auth/articles/$articleId/': {
+      id: '/_auth/articles/$articleId/'
+      path: '/'
+      fullPath: '/articles/$articleId/'
+      preLoaderRoute: typeof AuthArticlesArticleIdIndexRouteImport
+      parentRoute: typeof AuthArticlesArticleIdRoute
+    }
     '/_auth/articles/$articleId/edit': {
       id: '/_auth/articles/$articleId/edit'
       path: '/edit'
@@ -206,10 +224,12 @@ declare module '@tanstack/react-router' {
 
 interface AuthArticlesArticleIdRouteChildren {
   AuthArticlesArticleIdEditRoute: typeof AuthArticlesArticleIdEditRoute
+  AuthArticlesArticleIdIndexRoute: typeof AuthArticlesArticleIdIndexRoute
 }
 
 const AuthArticlesArticleIdRouteChildren: AuthArticlesArticleIdRouteChildren = {
   AuthArticlesArticleIdEditRoute: AuthArticlesArticleIdEditRoute,
+  AuthArticlesArticleIdIndexRoute: AuthArticlesArticleIdIndexRoute,
 }
 
 const AuthArticlesArticleIdRouteWithChildren =

@@ -7,28 +7,47 @@ import { DeleteIcon } from '../components/icons/DeleteIcon'
 import { ViewIcon } from '../components/icons/ViewIcon'
 import type { Article } from '../lib/articles'
 import { ButtonNavLink } from '../components/ButtonNavLink'
+import { IconButton } from '../components/IconButton'
+import { useDeleteArticle } from '../query/articles/useDeleteArticle'
 
 export const Route = createFileRoute('/_auth/articles/')({
     loader: ({ context: { queryClient } }) => queryClient.ensureQueryData(articlesQueryOptions),
     component: ArticlesPage,
+    errorComponent: () => <div>Failed to load articles.</div>,
+
+    //TODO: It would be good if Django returned 404 when there are no articles so this can be code-split as well
+    notFoundComponent: () => <div>No articles found.</div>,
 })
 
 function ArticlesPage() {
+    // Query logic
     const articlesQuery = useSuspenseQuery(articlesQueryOptions)
     const articles: Article[] = articlesQuery.data
     const isLoading = articlesQuery.isLoading
 
+    // Delete article mutation
+    const deleteArticle = useDeleteArticle()
+    const onDeleteClick = (articleId: number) => {
+        deleteArticle.mutate(articleId)
+    }
+
+    // Render logic
+
+    // Loading and empty states
     if (isLoading) {
         return <p>Loading articles...</p>
     }
-
     if (!articles || articles.length === 0) {
         return <p className="text-neutral-500">No articles found.</p>
     }
 
+    // Main render
     return (
         <>
-            <h1 className="font-semibold text-2xl self-start mb-16">Articles Overview</h1>
+            <OverviewTitle />
+            {deleteArticle.error && (
+                <div className="rounded-md bg-red-50 p-3 text-sm text-red-800">{deleteArticle.error.message}</div>
+            )}
             <ul className="space-y-2">
                 {articles.map((article) => (
                     <li
@@ -52,9 +71,8 @@ function ArticlesPage() {
                                 label="Edit article"
                                 variant="edit"
                             />
-                            <IconButtonNavLink
-                                to="/articles/$articleId"
-                                params={{ articleId: String(article.id) }}
+                            <IconButton
+                                onClick={() => onDeleteClick(article.id)}
                                 icon={<DeleteIcon />}
                                 label="Delete article"
                                 variant="delete"
@@ -70,4 +88,8 @@ function ArticlesPage() {
             </div>
         </>
     )
+}
+
+function OverviewTitle() {
+    return <h1 className="font-semibold text-2xl self-start mb-16 text-start">Articles Overview</h1>
 }

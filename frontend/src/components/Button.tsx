@@ -10,7 +10,7 @@ export function Button({ className = '', children, ...props }: ButtonProps) {
     // Could add variant-based styles here in the future
 
     const baseClasses =
-        'w-full rounded-md bg-neutral-900 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50'
+        'w-full rounded-md bg-neutral-900 px-4 py-2 text-sm! font-medium text-white transition-colors hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-50'
     const classes = twMerge(baseClasses, className)
 
     return (

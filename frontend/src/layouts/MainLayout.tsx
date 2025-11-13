@@ -20,7 +20,7 @@ export function MainLayout({
     align = 'start',
     className = '',
 }: Props) {
-    const widthClass = fullWidth ? 'w-screen' : `max-w-${width}`
+    const widthClass = fullWidth ? 'w-screen' : `max-md:w-screen md:max-w-${width}`
 
     const classes = twMerge('relative flex min-h-screen items-center justify-center bg-neutral-50', className)
     const wrapperClasses = twMerge(

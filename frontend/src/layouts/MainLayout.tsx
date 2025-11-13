@@ -36,7 +36,7 @@ export function MainLayout({
                 {(title || subTitle) && (
                     <div className="mb-12 text-center">
                         {title && <h1 className="heading-1 mb-4">{title}</h1>}
-                        {subTitle && <p className="text-sm text-neutral-600">{subTitle}</p>}
+                        {subTitle && <p className="text-base text-neutral-600">{subTitle}</p>}
                     </div>
                 )}
 

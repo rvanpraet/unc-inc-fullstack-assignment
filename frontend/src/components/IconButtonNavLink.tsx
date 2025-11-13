@@ -13,7 +13,7 @@ export function IconButtonNavLink({ icon, label, variant = 'view', ...props }: I
 
     const variantClasses = {
         view: 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900',
-        edit: 'text-blue-600 hover:bg-blue-50 hover:text-blue-700',
+        edit: 'text-neutral-600 hover:bg-blue-50 hover:text-neutral-900',
         delete: 'text-red-600 hover:bg-red-50 hover:text-red-700',
     }
 

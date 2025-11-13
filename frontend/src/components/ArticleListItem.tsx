@@ -6,6 +6,7 @@ import { EditIcon } from './icons/EditIcon'
 import { ViewIcon } from './icons/ViewIcon'
 import type { Article } from '../lib/articles'
 import { twMerge } from 'tailwind-merge'
+import { motion } from 'motion/react'
 
 interface ArticleListItemProps extends HTMLAttributes<HTMLLIElement> {
     article: Article
@@ -18,7 +19,12 @@ export default function ArticleListItem({ className, article, onDeleteClick }: A
     const classes = twMerge(baseClasses, className)
 
     return (
-        <li className={classes}>
+        <motion.li
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.35, delay: (article.id - 1) * 0.05, ease: 'easeInOut' }}
+            className={classes}
+        >
             <h2 className="text-lg font-medium text-neutral-900 pr-2">{article.title}</h2>
 
             <div className="flex items-center gap-1">
@@ -43,6 +49,6 @@ export default function ArticleListItem({ className, article, onDeleteClick }: A
                     variant="delete"
                 />
             </div>
-        </li>
+        </motion.li>
     )
 }

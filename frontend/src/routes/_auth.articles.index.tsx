@@ -25,10 +25,11 @@ export const Route = createFileRoute('/_auth/articles/')({
 })
 
 function ArticlesPage() {
-    // Query logic
+    // Navigation logic
     const navigate = useNavigate({ from: Route.fullPath })
     const { search } = Route.useSearch()
 
+    // Query logic
     const articlesQuery = useSuspenseQuery(articlesQueryOptions(search))
     const articles: Article[] = articlesQuery.data
     const isLoading = articlesQuery.isLoading
@@ -58,7 +59,7 @@ function ArticlesPage() {
         <>
             <OverviewTitle />
             <SearchField
-                className="max-w-sm"
+                className="max-w-sm max-md:pr-2"
                 value={search || ''}
                 onChange={handleSearchChange}
                 placeholder="Search articles by title..."
@@ -69,13 +70,13 @@ function ArticlesPage() {
             {articles.length > 0 && (
                 // Fixed the max height to avoid overflow issues with many articles
                 // Ideally would have pagination
-                <ul className="space-y-2 overflow-y-scroll max-h-[33vh]">
+                <ul className="space-y-2 overflow-y-scroll max-h-[33vh] max-md:pr-2 ">
                     {articles.map((article) => (
                         <ArticleListItem key={article.id} article={article} onDeleteClick={onDeleteClick} />
                     ))}
                 </ul>
             )}
-            <div className="mt-16 text-end">
+            <div className="pt-8 mt-8 border-t border-neutral-200 text-end">
                 <ButtonNavLink to="/articles/create" variant="secondary">
                     Add article
                 </ButtonNavLink>

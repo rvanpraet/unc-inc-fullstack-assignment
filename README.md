@@ -1,8 +1,6 @@
-# Unc Inc Fullstack assignment
+# Fullstack assignment
 
 ## Over Dit Project
-
-Dit project werd ontwikkeld als assessment voor Unc Inc.
 
 Het project bestaat uit een React TypeScript frontend en een Django REST API backend voor het beheren van artikelen met authenticatie.
 
